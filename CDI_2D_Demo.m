@@ -1,7 +1,7 @@
 %% Capacitive deionization 2D simulation
 %
 % Developed by: Xia Shang
-% Advisors: Kyle Smith, Roland Cusick
+% This model is supervised by Prof. Kyle C. Smith at University of Illinois at Urbana-Champaign
 % Copyright: Xia Shang, Roland Cusick, Kyle Smith
 % University of Illinois at Urbana-Champaign
 % All rights reserved.
