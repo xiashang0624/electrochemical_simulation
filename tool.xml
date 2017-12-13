@@ -1,0 +1,281 @@
+<?xml version="1.0"?>
+<run>
+    <tool>
+        <title>capacitive deionization cell operated under constant current.</title>
+        <about>imulate the concentration and voltage distribution through a conventional capacitive deionization cell operated under constant current.
+Operating voltage window: 0-1.2 V
+User has the freedom to adjust the following input parameters:
+Current density: 2.2 - 20 A/m2
+Positive electrode surface immobile charge density: 0-8 C/cm3
+Flow rate: 0.2-2 mL/min
+Leakage current effect: on/off</about>
+        <command>matlab -nodisplay -r infile='@driver',path('@tool',path),main</command>
+    </tool>
+    <input>
+        <group id="tabs">
+            <about>
+                <label>Parameter selection for two dimentional CDI modeling</label>
+                <description>Tabs for CDI modeling panel</description>
+            </about>
+            <group id="Operation">
+                <about>
+                    <label>Operation</label>
+                    <description>Contains the operating conditions of CDI modeling</description>
+                </about>
+                <number id="Feed_Concentration">
+                    <about>
+                        <label>Feed Concentration (mM)</label>
+                        <description>Feed concentration, unit: mM.</description>
+                    </about>
+                    <default>30</default>
+                    <min>1</min>
+                    <max>500</max>
+                </number>
+                <number id="Flow_Rate">
+                    <about>
+                        <label>Flow Rate (mL/min)</label>
+                        <description>Constant flow rate is assumes.  velocity is assumed constant throughout the flow channel.</description>
+                    </about>
+                    <default>0.07</default>
+                    <min>0.01</min>
+                    <max>4</max>
+                </number>
+                <number id="Current_Density">
+                    <about>
+                        <label>Current Density (mA/cm2)</label>
+                        <description>Constant current applied during cell change/discharge stages
+</description>
+                    </about>
+                    <default>1</default>
+                    <min>0.3</min>
+                    <max>2.2</max>
+                </number>
+                <number id="Maximum_Voltage">
+                    <about>
+                        <label>Maximum Cell Volage (mV)</label>
+                        <description>Maximum cell voltage</description>
+                    </about>
+                    <default>1200</default>
+                    <min>0</min>
+                    <max>2000</max>
+                </number>
+                <number id="Minimum_Voltage">
+                    <about>
+                        <label>Minimum Cell Voltage (mV)</label>
+                        <description>Minimum Cell Voltage </description>
+                    </about>
+                    <default>0</default>
+                    <min>-2000</min>
+                    <max>500</max>
+                </number>
+                <number id="Cycle_Number">
+                    <about>
+                        <label>Cycle Number to Simulate</label>
+                        <description>Number of cycles for simulation.  </description>
+                    </about>
+                    <default>2</default>
+                    <min>1</min>
+                    <max>10</max>
+                </number>
+            </group>
+            <group id="Cell_Design">
+                <about>
+                    <label>Cell Design</label>
+                    <description>Cell design section</description>
+                </about>
+                <number id="Lenth">
+                    <about>
+                        <label>Length (cm)</label>
+                        <description>Length of electrode and flow channel along the direction of flow (cm)</description>
+                    </about>
+                    <default>9</default>
+                    <min>1</min>
+                    <max>30</max>
+                </number>
+                <number id="Pos_Ele_Thickness">
+                    <about>
+                        <label>positive electrode thickness (um)</label>
+                        <description>thickness of the positive electrode</description>
+                    </about>
+                    <default>450</default>
+                    <min>100</min>
+                    <max>1000</max>
+                </number>
+                <number id="Neg_Ele_Thickness">
+                    <about>
+                        <label>negative electrode thickness (um)</label>
+                        <description>thickness of the positive electrode</description>
+                    </about>
+                    <default>450</default>
+                    <min>100</min>
+                    <max>1000</max>
+                </number>
+                <number id="Flow_Channel_Thickness">
+                    <about>
+                        <label>Flow_Channel_Thickness (um)</label>
+                        <description>Thickness of flow channel</description>
+                    </about>
+                    <default>250</default>
+                    <min>100</min>
+                    <max>800</max>
+                </number>
+                <number id="FC_Porosity">
+                    <about>
+                        <label>Flow_Channel_Porosity</label>
+                        <description>Porosity of flow channel</description>
+                    </about>
+                    <default>0.7</default>
+                    <min>0.4</min>
+                    <max>1</max>
+                </number>
+                <number id="Macroporosity">
+                    <about>
+                        <label>Electrode Macroporosity</label>
+                        <description>Macroporosity of electrode</description>
+                    </about>
+                    <default>0.35</default>
+                    <min>0.3</min>
+                    <max>0.6</max>
+                </number>
+                <number id="Microporosity">
+                    <about>
+                        <label>Electrode Microporosity</label>
+                        <description>Microporosity of electrode</description>
+                    </about>
+                    <default>0.25</default>
+                    <min>0.2</min>
+                    <max>0.3</max>
+                </number>
+            </group>
+            <group id="Leakage_current">
+                <about>
+                    <label>Leakage Current</label>
+                    <description>Leakage current due to parasidic faradic reactions</description>
+                </about>
+                <number id="I0_Carbon">
+                    <about>
+                        <label>Exchange current density of Carbon corrosion</label>
+                        <description>Exchange current density</description>
+                    </about>
+                    <default>1</default>
+                    <min>0.1</min>
+                    <max>100</max>
+                </number>
+            </group>
+            <group id="Surface_Charge">
+                <about>
+                    <label>Surface_Charge</label>
+                    <description>Electrode immobile surface charge density</description>
+                </about>
+                <number id="Immobile_Charge_pos">
+                    <about>
+                        <label>Surface charges on the positive electrode (C/cm3)</label>
+                        <description>Immobile charges on the electrode based on the modified Donnan theory</description>
+                    </about>
+                    <default>-4</default>
+                    <min>-10</min>
+                    <max>10</max>
+                </number>
+                <number id="Immobile_Charge_neg">
+                    <about>
+                        <label>Surface charges on the negative electrode (C/cm3)</label>
+                        <description>Immobile charges on the electrode based on the modified Donnan theory</description>
+                    </about>
+                    <default>0</default>
+                    <min>-10</min>
+                    <max>10</max>
+                </number>
+                <number id="PZC_pos">
+                    <about>
+                        <label>PZC of Positive Electrode (V vs. SHE)</label>
+                        <description>PZC of the positive electrode. </description>
+                    </about>
+                    <default>0.5</default>
+                    <min>-0.5</min>
+                    <max>0.8</max>
+                </number>
+                <number id="PZC_neg">
+                    <about>
+                        <label>PZC of Negative Electrode (V vs. SHE)</label>
+                        <description>PZC of the negative electrode</description>
+                    </about>
+                    <default>0.5</default>
+                    <min>-0.5</min>
+                    <max>0.8</max>
+                </number>
+            </group>
+            <group id="Computation">
+                <about>
+                    <label>Computation</label>
+                    <description>Numerical computation parameters</description>
+                </about>
+                <number id="dt_record">
+                    <about>
+                        <label>Recording_Time_Step (s)</label>
+                        <description>Time step to save data to file.</description>
+                    </about>
+                    <default>1</default>
+                    <min>0.01</min>
+                    <max>10</max>
+                </number>
+                <number id="dt">
+                    <about>
+                        <label>Computational_time_step (s)</label>
+                        <description>Computational time step</description>
+                    </about>
+                    <default>0.002</default>
+                    <min>0.00001</min>
+                    <max>0.01</max>
+                </number>
+                <number id="dx">
+                    <about>
+                        <label>dx (um)</label>
+                        <description>Space along the direction of current</description>
+                    </about>
+                    <default>20</default>
+                    <min>5</min>
+                    <max>100</max>
+                </number>
+                <number id="dy">
+                    <about>
+                        <label>dy (um)</label>
+                        <description>Space along the direction of current</description>
+                    </about>
+                    <default>1800</default>
+                    <min>500</min>
+                    <max>4000</max>
+                </number>
+            </group>
+        </group>
+    </input>
+    <output>
+        <curve id="Cell_Voltage">
+            <about>
+                <label>Cell voltage</label>
+                <description>Cell voltage during cycling experiment</description>
+            </about>
+            <xaxis>
+                <label>Time (s)</label>
+                <description>time during cell cycling test</description>
+            </xaxis>
+            <yaxis>
+                <label>Cell voltage (V)</label>
+                <description>Cell voltage during cell cycling test</description>
+            </yaxis>
+        </curve>
+        <curve id="Effluent_Concentration">
+            <about>
+                <label>Effluent_Concentration</label>
+                <description>Simulated effluent concentration during constant current charge/discharge cycling of a conventional CDI cell</description>
+            </about>
+            <xaxis>
+                <label>Time (s)</label>
+                <description>Time</description>
+            </xaxis>
+            <yaxis>
+                <label>Effluent concentration (mM)</label>
+                <description>Effluent concentration</description>
+            </yaxis>
+        </curve>
+    </output>
+</run>

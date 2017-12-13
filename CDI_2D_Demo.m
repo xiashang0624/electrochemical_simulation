@@ -1,17 +1,17 @@
 %% Capacitive deionization 2D simulation
 %
 % Developed by: Xia Shang
-% This model is supervised by Prof. Kyle C. Smith at University of Illinois at Urbana-Champaign
+% Advisors: Kyle Smith, Roland Cusick
 % Copyright: Xia Shang, Roland Cusick, Kyle Smith
 % University of Illinois at Urbana-Champaign
 % All rights reserved.
-% 
+%
 % Funded by: US National Science Foundation Award No. 1605290 entitiled
 % "SusChEM: Increasing Access to Sustainable Freshwater Resources with
 % Membrane Capacitve Deionization", and Joint Center for Energy Storage
 % Research, an Energy Innovation Hub funded by the U.S. Department of
 % Energy, Office of Science, Basic Energy Sciences.
-% 
+%
 % Redistribution and use in source and binary forms, with or
 % without modification, are permitted provided that the following
 % conditions are met:
@@ -35,14 +35,21 @@
 % NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 % SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-clc; clear; close all;
+function [T_r, V_cell, C_eff] = CDI_2D_Demo(C0, Q_FC,...
+            J, Q_fix_pos, Q_fix_neg,...
+            V_max, V_min, Cycle_limit, L_FC, T_pos, T_neg, ...
+            T_FC, R_FC, R_Macro, R_Micro, dt_record)
+%clc; clear; close all;
 tic
+
+
 %% cell operating parameters
-C0=30;                         % mM, influent concentration
-V_max=1200;                    % mV, cell voltage 
-J= 1;                          % mA/cm2, projected area
-Cycle_limit = 8;               % -, total cycle number
-Q_FC = 0.0736;                 % mL/min, flow rate suggested range (0.05 - 1 mL/min)
+%C0=30;                         % mM, influent concentration
+%V_max=200;                    % mV, cell voltage
+%V_min = 0;
+%J= 1;                          % mA/cm2, projected area
+%Cycle_limit = 2;               % -, total cycle number
+%Q_FC = 0.0736;                 % mL/min, flow rate suggested range (0.05 - 1 mL/min)
 
 %% Cell design
 T_CC1 = 0;                % um, thickness of current collector 1
@@ -54,11 +61,11 @@ L_FC = 9;                 % cm, Length of flow channel
 W_FC = 2;                 % cm, Width of flow channel
 V_internal = 0.455;       % mL, volume of a well mixed internal tank, dead-volume
 
-%% Electrode Porosities 
+%% Electrode Porosities
 M_e = 0.4214;                    % g/cm3; electrode desity
 C_Measured = 49;                 % F/g; Stern-layer capacitance, this value can be initially estimated based on the whole cell capacitance measured in CV at low scan rate (e.g., < 1mV/s) in 1 M NaCl
-Q_fix_pos = -4;                  % C/cm3, immobile charge density
-Q_fix_neg = 0;                   % C/cm3, immobile charge density
+%Q_fix_pos = -4;                  % C/cm3, immobile charge density
+%Q_fix_neg = 0;                   % C/cm3, immobile charge density
 uatt=0;                          % -, attracitve chemical force using in the mD theory
 R_Macro = 0.4;                   % Macropore ratio
 R_Micro = 0.2;                   % Micropore ratio
@@ -72,7 +79,7 @@ dy=200*L_FC;              % um
 
 %% data storage to reduce membrane usage
 tmin = 0;                        % s, starting time
-tmax =round(800*Cycle_limit*1.2/J);   % s, ending time, this value can be adjusted 
+tmax =round(800*Cycle_limit*1.2/J);   % s, ending time, this value can be adjusted
 dt_record=1;            % s, time step to record data
 Nt=round((tmax-tmin)/dt);   % total number of nodes in time
 Nt_r = round((tmax-tmin)/dt_record);      % no. of stored nodes in time
@@ -87,7 +94,7 @@ c_Helmholtz = E_Dielectric*E_Permittivity/d_Helmholtz;  % F/m2
 A_effective = C_Measured/c_Helmholtz;                   % m2/g; effective surface area
 Temp = 298.16;                      % K, temperature
 KB = 1.38*10^-23;                   % C V K-1; Boltzmann constant
-e = 1.602*10^-19;                   % C; 
+e = 1.602*10^-19;                   % C;
 Na = 6.02*10^23;                    % mol-1;
 F = 96485.3365;                     % C mol-1; Faraday constant
 M_NaCl=58.44;                       % g/mole
@@ -105,7 +112,7 @@ D_FC = D_NaCl*10^8*R_FC^0.5;        % um2/s, effective diffusion coefficient
 D_mid = 2*D_FC*D_e/(D_FC+D_e);
 
 % resistance
-R_contact = 29.33;                  % ohm cm2
+R_contact = 9;                  % ohm cm2
 R_electrode = 0.1625;               % ohm*m
 
 % flow rate and mixing in the dead-volume
@@ -120,7 +127,7 @@ I0_O2 = 5.5 *10^-7;                 % mA/cm2
 E0_C = 0.207;                       % V, vs SHE
 E0_O2 = 0.81;                       % V, vs SHE
 RT_F = 0.0592;                      % V
-a_C = 0.5;                    
+a_C = 0.5;
 a_O2 = 0.5;
 E0_An = 0.5419;                     % V, vs SHE, measured at equlibrium condition when two electrodes were short circuited
 E0_Ca = 0.5419;                     % V, vs SHE, measured at equlibrium condition when two electrodes were short circuited
@@ -168,7 +175,7 @@ V_i = W_pos*dy/10000*dx/10000;      % cm3, volume per compartment
 x_ind=[1:xmax_pos, xmin_neg+1:xmax_neg];    % indexing for the electrodes
 FC_ind=[xmax_pos+1:xmin_neg];               % indexing for the flow channel
 
-FC_ind_A = zeros(numel(FC_ind)*ny,1);       % indexing for the flow channel in 2D    
+FC_ind_A = zeros(numel(FC_ind)*ny,1);       % indexing for the flow channel in 2D
 for i=1:ny
     FC_ind_A(1+(i-1)*numel(FC_ind):i*numel(FC_ind)) = FC_ind + (i-1)*nx;
 end
@@ -197,7 +204,7 @@ C_re =zeros(nx,ny,Nt_r);            % mM, recorded concentration tensor
 II_re =zeros(nx,ny,Nt_r);           % mA, recorded current tensor
 Q_mi_re = zeros(nx,ny,Nt_r);        % mV, recorded charge density tensor
 IL_re = zeros(nx,ny,Nt_r);          % mA, recorded leakage density tensor
-Qt_0 = zeros (nx,ny);               % C, charge density matrix 
+Qt_0 = zeros (nx,ny);               % C, charge density matrix
 Qt_1 = zeros (nx,ny);               % C, charge density matrix
 Qt_e=Qt_0;                          % C, charge density matrix
 Qt_mi=-Qt_0;                        % C, charge density matrix
@@ -222,11 +229,11 @@ indy_1=circshift(indy,1);
 indy_0=circshift(indy,-1);
 
 % calculate ionic conductivity S/cm
-Cond_M(:,:)=2*D_NaCl*C_0(:,:)/KB/Temp/1000000*F*e*R_e^1.5;            
-Cond_M(xmax_pos+1:xmin_neg,:)=2*D_NaCl*C_0(xmax_pos+1:xmin_neg,:)/KB/Temp/1000000*F*e*R_FC^1.5;            
+Cond_M(:,:)=2*D_NaCl*C_0(:,:)/KB/Temp/1000000*F*e*R_e^1.5;
+Cond_M(xmax_pos+1:xmin_neg,:)=2*D_NaCl*C_0(xmax_pos+1:xmin_neg,:)/KB/Temp/1000000*F*e*R_FC^1.5;
 Cond_M(1:xmax_pos-1,:)=2.*Cond_M(1:xmax_pos-1,:).*Cond_M(indx_0(1:xmax_pos-1),:)./(Cond_M(1:xmax_pos-1,:)+Cond_M(indx_0(1:xmax_pos-1),:));
 Cond_M(xmin_neg+1:xmax_neg-1,:)=2.*Cond_M(xmin_neg+1:xmax_neg-1,:).*Cond_M(indx_0(xmin_neg+1:xmax_neg-1),:)./(Cond_M(xmin_neg+1:xmax_neg-1,:)+Cond_M(indx_0(xmin_neg+1:xmax_neg-1),:));
-Ri_M(:,:) = 1./Cond_M(:,:)*dx/dy/W_FC; 
+Ri_M(:,:) = 1./Cond_M(:,:)*dx/dy/W_FC;
 Ri_S=zeros(ny,1);
 Ri_S(:)=sum(Ri_M(xmax_pos:xmin_neg,:));
 
@@ -261,10 +268,10 @@ II_0(end,:)=-IL(end,:)+(VV_0(end-1,:)-VV_0(end,:))./(Oe+Ri_M(end,:));
 II_0(xmin_neg+1,:)=-I_y'-sum(II_0(xmin_neg+2:end,:))-sum(IL(xmin_neg+1:end,:));
 
 % calculate the ionic current in the electrode
-A = tril (ones(N));              
-A1=A';                      
-A2=tril(ones(N_FC))';       
-I_Ri(1:xmax_pos,1)=A*(IL(1:xmax_pos,1)+II_0(1:xmax_pos,1));              
+A = tril (ones(N));
+A1=A';
+A2=tril(ones(N_FC))';
+I_Ri(1:xmax_pos,1)=A*(IL(1:xmax_pos,1)+II_0(1:xmax_pos,1));
 I_Ri(xmax_pos+1:xmin_neg,1)=I_y(1);
 I_Ri(xmin_neg+1:xmax_neg,1)=-A1*(IL(xmin_neg+1:xmax_neg,1)+II_0(xmin_neg+1:xmax_neg,1));
 
@@ -272,7 +279,7 @@ I_Ri(xmin_neg+1:xmax_neg,1)=-A1*(IL(xmin_neg+1:xmax_neg,1)+II_0(xmin_neg+1:xmax_
 %B.C vector
 bc=zeros(nx,ny);
 bc(1,:)=0; bc(nx,:)=0;  %Neumann B.Cs
-bc(:,1)=0; bc(:,ny)=0;  
+bc(:,1)=0; bc(:,ny)=0;
 %bc(xmax_pos+1:xmin_neg,1)=C0/dy^2;  %Dirichlet B.Cs
 
 %B.Cs at the corners:
@@ -349,6 +356,20 @@ Vt (1,2)=R_contact*J;                               % mV, voltage due to the res
 Vt (1,3)=0;                                         % mV, membrane Donnan potential
 Vt (1,4)=sum(Vt(1,1:3));                            % mV, Cell voltage
 
+fprintf('Thank you for using the CDI simulation tool\n')
+fprintf('***************************\n')
+fprintf('*******CDI 2D Model********\n')
+fprintf('Developed by Xia Shang at UIUC\n')
+fprintf('Copyright: Xia Shang, Prof. Roland Cusick, Prof. Kyle Smith\n\n')
+fprintf('*******Selected input******\n')
+fprintf('Current Density = %4.2f mA/cm2\nVoltage Window= %4.2f mV\nInfluent Concentration = %4.2f mM.\n', J, V_max-V_min, C0)
+time_stamp = datestr(now, 'HH:MM:SS');
+date = datetime('today');
+fprintf('Simulation starting time: %s', time_stamp)
+fprintf('Date: %s', date)
+fprintf('\n')
+fprintf('*********Output***********\n')
+fprintf('Time; Cell Voltage; Effluent Concentration\n')
 %% Main time loop
 for n=2:1:Nt            % time step n
     flag_7=0;           % reset flag_7
@@ -361,7 +382,7 @@ for n=2:1:Nt            % time step n
         flag_0=1;       % reset flag_0 for the current while loop
         flag_3=0;       % reset flag_3
         T1=T0+dt;
-        
+
         % guess electric charge density based on the information at the previous time step
         Qt_e(:,:)=Qt_0(:,:)+II_0(:,:)*dt/10^3/V_i; % C/cm3-electrode
         Count_Q(n)=0;
@@ -377,17 +398,17 @@ for n=2:1:Nt            % time step n
                 V_D(x_ind,:)=-asinh(Qt_mi(x_ind,:)/R_Micro*10^6/F/2./(C1(x_ind,:))/exp(uatt));  % non-dimentional Donnan layer potential
                 VV_0(x_ind,:)=V_D(x_ind,:)*25.7+Qt_e(x_ind,:)/C_Measured/M_e*1000;   % mV, electrode polarization
                 C_mi_1(x_ind,:)=2*(C1(x_ind,:))*exp(uatt).*cosh(V_D(x_ind,:));  % mmol-L micropores
-                
+
                 % Solve for new Ce including the effect of diffusion (implicit, forward time, CN in diffusion, upwind explicit in aadvection)
                 C_1=C1;
                 C1(x_ind,:)=R_Macro*C_0(x_ind,:)-(C_mi_1(x_ind,:)-C_mi_0(x_ind,:))/2*R_Micro;
                 C1(FC_ind,:)=R_FC*C_0(FC_ind,:);
                 C1(FC_ind,2:end)=C1(FC_ind,2:end)+v_FC*dt/dy*(C_0(xmax_pos+1:xmin_neg,indy_1(2:end))-C_0(xmax_pos+1:xmin_neg,indy(2:end)));
-                C1(FC_ind,1)=C1(FC_ind,1)+v_FC*dt/dy*(C0-C_0(xmax_pos+1:xmin_neg,1));                
+                C1(FC_ind,1)=C1(FC_ind,1)+v_FC*dt/dy*(C0-C_0(xmax_pos+1:xmin_neg,1));
                 C1=reshape(C1+bc,[],1);
                 C1=D\C1;
                 C1=reshape(C1,nx,ny);
-                
+
                 % check for convergence
                 err(Count_C(n)+1,1)=max(max(abs(C1-C_1)./C_1));
                     if err(Count_C(n)+1,1)<10^-7;
@@ -397,7 +418,7 @@ for n=2:1:Nt            % time step n
                     end
                 Count_C(n) = Count_C(n)+1;
             end
-            
+
             % update the current and voltage distribution
             Cond_M(:,:)=2*D_NaCl*C_1(:,:)/KB/Temp/1000000*F*e*R_e^1.5;            % S/cm conductivity matrix
             Cond_M(xmax_pos+1:xmin_neg,:)=2*D_NaCl*C_1(xmax_pos+1:xmin_neg,:)/KB/Temp/1000000*F*e*R_FC^1.5;            % S/cm conductivity matrix
@@ -405,7 +426,7 @@ for n=2:1:Nt            % time step n
             Cond_M(xmin_neg+1:xmax_neg-1,:)=2.*Cond_M(xmin_neg+1:xmax_neg-1,:).*Cond_M(indx_0(xmin_neg+1:xmax_neg-1),:)./(Cond_M(xmin_neg+1:xmax_neg-1,:)+Cond_M(indx_0(xmin_neg+1:xmax_neg-1),:));
             Ri_M(:,:) = 1./Cond_M(:,:)*dx/dy/W_FC; % ohm, resistance matrix
             Ri_S(:)=sum(Ri_M(xmax_pos:xmin_neg,:));
-            
+
             % calculate the current distribution in the electrode
             M_I(1:(ny+1):(end-ny))=Ri_S(1:(end-1));
             M_I((ny+1):(ny+1):end)=-Ri_S(2:end);
@@ -413,7 +434,7 @@ for n=2:1:Nt            % time step n
             B_I(1:end-1)=VV_0(xmax_pos,indy_0(1:(end-1)))-VV_0(xmin_neg+1,indy_0(1:(end-1)))-VV_0(xmax_pos,1:(end-1))+VV_0(xmin_neg+1,1:(end-1));
             B_I(end)=I;
             I_y=S_I\B_I;                    % solve the current distribution in the electrode in the y-direction
-            
+
             % calculate the leakage current
             IL(1:xmax_pos,:)=a_ele*I0_C*V_i*exp(a_C/RT_F.*(VV_0(1:xmax_pos,:)/1000+E0_An-E0_C)); % VB model
             %IL(1:xmax_pos,:)=0;    % no leakage current
@@ -421,18 +442,18 @@ for n=2:1:Nt            % time step n
             II_1(2:xmax_pos-1, :)=-IL(2:xmax_pos-1,:)+(VV_0(indx_0(2:xmax_pos-1),:)-VV_0(indx(2:xmax_pos-1),:))./(Oe+Ri_M(2:xmax_pos-1,:))-(VV_0(indx(2:xmax_pos-1),:)-VV_0(indx_1(2:xmax_pos-1),:))./(Oe+Ri_M(indx_1(2:xmax_pos-1),:));
             II_1(1,:)=-IL(1,:)+(VV_0(2,:)-VV_0(1,:))/(Oe+Ri_M(1,:));
             II_1(xmax_pos,:)=I_y'-sum(II_1(1:xmax_pos-1,:))-sum(IL(1:xmax_pos,:));
-            
+
             % calculate the current distribution in the Cathode
             %IL(xmin_neg+1:xmax_neg,:)=0;   % no leakage curret
             IL(xmin_neg+1:xmax_neg,:)=-IL_O2*V_i./(1+exp((VV_0(xmin_neg+1:xmax_neg,:)/1000+E0_Ca-E_half)/RT_F));    % limiting current model
             %IL(xmin_neg+1:xmax_neg,:)=a_ele*I0_O2*V_i*(exp(a_O2/RT_F.*(VV_0(xmin_neg+1:xmax_neg,:)/1000+E0_Ca-E0_O2))-exp(-a_O2/RT_F.*(VV_0(xmin_neg+1:xmax_neg,:)/1000+E0_Ca-E0_O2)));
             %BV model
-            
+
             % update the current distribution in the cathode
             II_1(xmin_neg+2:end-1,:)=-IL(xmin_neg+2:end-1,:)+(VV_0(indx_1(xmin_neg+2:end-1),:)-VV_0(indx(xmin_neg+2:end-1),:))./(Oe+Ri_M(indx_1(xmin_neg+2:end-1),:))-(VV_0(indx(xmin_neg+2:end-1),:)-VV_0(indx_0(xmin_neg+2:end-1),:))./(Oe+Ri_M(indx(xmin_neg+2:end-1),:));
             II_1(end,:)=-IL(end,:)+(VV_0(end-1,:)-VV_0(end,:))./(Oe+Ri_M(end,:));
             II_1(xmin_neg+1,:)=-I_y'-sum(II_1(xmin_neg+2:end,:))-sum(IL(xmin_neg+1:end,:));
-            
+
             % Calculate the charge density
             Qt_1(:,:)=Qt_0(:,:)+(II_0(:,:)+II_1(:,:))/2/1000/V_i*dt;
 
@@ -453,21 +474,21 @@ for n=2:1:Nt            % time step n
     C_mix_1 = C_mid - (C_mid - C_mix_0)*exp(-k_mix*dt);
     C_eff_0 = C_eff_1;
     C_mix_0 = C_mix_1;
-    
+
     % Calculate the  voltage distribution
     Vt_1 (1)=-VV_0(xmin_neg+1,end)+I_y(end)*Ri_S(end)+VV_0(xmax_pos,end);       % mV, voltage in the solution
     Vt_1 (2)=R_contact/A_FC*I;            % mV, voltage due to the resistance of two IEMs and external resistance
     Vt_1 (3)=0;                           % mV, Donnan potential
     Vt_1 (4)=sum(Vt_1(1:3));
-    
+
     % check if cell voltage reaches the maximum voltage limit
-    if Vt_1(4)>V_max&&flag_4==1;    
+    if Vt_1(4)>V_max&&flag_4==1;
         I=-I;
         Discharge_index(Cycle_number)=n_r;
         flag_4=0;
         flag_5=1;
     end
-    
+
     % check if cell voltage reaches the minimum voltage limit
     if Vt_1(4)<0&&flag_5==1 && n_r>100
         I=-I;
@@ -476,8 +497,8 @@ for n=2:1:Nt            % time step n
         flag_5=0;
         flag_4=1;
     end
-    
-    % check for data storage     
+
+    % check for data storage
     if T1-T_r(n_r)>=dt_record
         n_r=n_r+1;
         T_r(n_r)=T1;
@@ -488,18 +509,24 @@ for n=2:1:Nt            % time step n
         II_re(:,:,n_r)=II_1(:,:);
         Q_mi_re(:,:,n_r)=Qt_mi;
         IL_re(:,:,n_r) = IL;
+        fprintf('T = %4.2f s, V_cell = %4.2f mV, C_eff = %4.2f mM.\n', T1, Vt_1(4), C_eff_1)
     end
-    % check if the maximum cycle litmits is reached  
-    if Cycle_number==Cycle_limit;
+    % check if the maximum cycle litmits is reached
+    if Cycle_number==Cycle_limit+1;
         %I=0;
         flag_6=0;
         break
     end
 end
 
+T_r = T_r(1:n_r)';
+V_cell = Vt(1:n_r, 4)';
+C_eff = C_eff(1:n_r)';
+
 %%%%%%post-treatment, save data in file
-filename = sprintf('CDI_2D_target_effluent_%icm_%imV_%imM_amph_D_%iA_%iFg_%iC_%s.mat',L_FC, V_max,C0,int32(J*10),C_Measured,Q_fix_pos,date);
-save(filename,'Vol_FC','V_max','n_r','T_r','II_re','C_re','C_eff','C_eff_mix','Vt','Q_mi_re','Cycle_index','Discharge_index','L_FC','Q_FC','J','A_FC','dx','dy','Batch_index','B_number','IL_re','C_Measured','Q_fix_pos','Q_fix_neg','k_mix')
+%filename = sprintf('CDI_2D_target_effluent_%icm_%imV_%imM_amph_D_%iA_%iFg_%iC_%s.mat',L_FC, V_max,C0,int32(J*10),C_Measured,Q_fix_pos,date);
+%save(filename,'Vol_FC','V_max','n_r','T_r','II_re','C_re','C_eff','C_eff_mix','Vt','Q_mi_re','Cycle_index','Discharge_index','L_FC','Q_FC','J','A_FC','dx','dy','Batch_index','B_number','IL_re','C_Measured','Q_fix_pos','Q_fix_neg','k_mix')
 
 toc
+end
 
