@@ -9,3 +9,17 @@ Both 1-D and 2-D models have been developed.
 
 The details of this work can be seen in our [paper](./CDI_pulsation_model_Shang_2017.pdf) or my thesis.
 
+If you use this model in your work, please cite our paper:  
+
+'''
+@article{shang2017combined,
+  title={A Combined Modeling and Experimental Study Assessing the Impact of Fluid Pulsation on Charge and Energy Efficiency in Capacitive Deionization},
+  author={Shang, Xia and Cusick, Roland D and Smith, Kyle C},
+  journal={Journal of The Electrochemical Society},
+  volume={164},
+  number={14},
+  pages={E536--E547},
+  year={2017},
+  publisher={The Electrochemical Society}
+}
+'''
