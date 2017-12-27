@@ -12,3 +12,5 @@ The details of this work can be seen in our [paper](./CDI_pulsation_model_Shang_
 If you use this model in your work, please cite our paper:  
 
 Shang, X., Cusick, R. D., & Smith, K. C. (2017). A Combined Modeling and Experimental Study Assessing the Impact of Fluid Pulsation on Charge and Energy Efficiency in Capacitive Deionization. Journal of The Electrochemical Society, 164(14), E536-E547.
+
+Feel free to contact me regarding any questions at shangxia0624@gmail.com
